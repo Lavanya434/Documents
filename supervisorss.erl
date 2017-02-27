@@ -45,14 +45,23 @@ handle_cast(_Message, S) ->
 
 
 handle_info(timeout, S = #state{name=N, skill=good}) ->
-	io:format("~s produced sound!~n",[N]),
-	{noreply, S, ?DELAY};
+	case random:uniform(5) of 
+		1 -> 
+			io:format("~s played a false note. Uh oh~n",[N]),
+			{stop, bad_note, S};
+		_->
+			io:format("good mesage received"),
+			io:format("~s produced sound!~n",[N]),
+			{noreply, S, ?DELAY}
+	end;
+	
 handle_info(timeout, S = #state{name=N, skill=bad}) ->
 	case random:uniform(5) of
 		1 ->
 			io:format("~s played a false note. Uh oh~n",[N]),
 			{stop, bad_note, S};
 		_ ->
+			io:format("bad mesage received"),
 			io:format("~s produced sound!~n",[N]),
 			{noreply, S, ?DELAY}
 	end;
